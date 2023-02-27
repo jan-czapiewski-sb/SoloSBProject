@@ -9,10 +9,12 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class TaskResponse {
     private Long id;
     private String titleOfTask;
     private String description;
     private String priorityOfTask;
     private LocalDate executionDay;
+    private String done;
 }

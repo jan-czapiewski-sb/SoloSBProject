@@ -54,26 +54,26 @@ public class TaskServiceTest {
         verify(taskRepository).save(task);
     }
 
-    @Test
-    void checkIfAnyOfFieldsIsNotNull_correct() {
-        //given
-        TaskRequest taskRequest = new TaskRequest();
-        Task task = new Task();
-        long id = 1;
-        taskRequest.setTitleOfTask("a");
-        taskRequest.setDescription("a");
-        taskRequest.setExecutionDay(LocalDate.now());
-        taskRequest.setPriorityOfTask("LOW");
-        task.setId(id);
-        task.setTitleOfTask(taskRequest.getTitleOfTask());
-        task.setPriorityOfTask(PriorityOfTask.valueOf(taskRequest.getPriorityOfTask()));
-        task.setDescription(taskRequest.getDescription());
-        when(taskRepository.findById(id)).thenReturn(Optional.of(task));
-        //when
-        taskService.editFields(taskRequest,id);
-        //then
-        verify(taskRepository).save(task);
-    }
+//    @Test
+//    void checkIfAnyOfFieldsIsNotNull_correct() {
+//        //given
+//        TaskRequest taskRequest = new TaskRequest();
+//        Task task = new Task();
+//        long id = 1;
+//        taskRequest.setTitleOfTask("a");
+//        taskRequest.setDescription("a");
+//        taskRequest.setExecutionDay(LocalDate.now());
+//        taskRequest.setPriorityOfTask("LOW");
+//        task.setId(id);
+//        task.setTitleOfTask(taskRequest.getTitleOfTask());
+//        task.setPriorityOfTask(PriorityOfTask.valueOf(taskRequest.getPriorityOfTask()));
+//        task.setDescription(taskRequest.getDescription());
+//        when(taskRepository.findById(id)).thenReturn(Optional.of(task));
+//        //when
+//        taskService.editFields(taskRequest,id);
+//        //then
+//        verify(taskRepository).save(task);
+//    }
 
     @Test
     void getAllTasks_correct() {

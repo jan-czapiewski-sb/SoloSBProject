@@ -21,30 +21,40 @@ public class TaskController {
     private final TaskRepository taskRepository;
     private final TaskMapper taskMapper;
 
+    @GetMapping("/api/task-done/{id}")
+    public void markAsDone(@PathVariable long id) {
+        Task task = taskRepository.findById(id).orElseThrow();
+        task.setDone(true);
+        taskRepository.save(task);
+    }
+
     @PostMapping("/api/task")
     public void addTask(@RequestBody Task taskRequest) {
+        System.out.println(taskRequest);
         taskRepository.save(taskRequest);
     }
+
     @DeleteMapping("/api/task/{id}")
-    public void deleteTask(@PathVariable long id){
+    public void deleteTask(@PathVariable long id) {
         taskRepository.delete(taskRepository.findById(id).orElseThrow());
     }
 
-//    @PutMapping("/api/task/{id}")
+    //    @PutMapping("/api/task/{id}")
 //    public TaskResponse editTask(@RequestBody TaskRequest taskRequest, @PathVariable long id) {
 //        return taskService.editFields(taskRequest, id);
 //    }
-@PutMapping("/api/task/{id}")
-Task updateModel(@RequestBody Task newToDoModel, @PathVariable long id){
-    return taskRepository.findById(id)
-            .map(toDoModel -> {
-                toDoModel.setExecutionDay(newToDoModel.getExecutionDay());
-                toDoModel.setDescription(newToDoModel.getDescription());
-                toDoModel.setTitleOfTask(newToDoModel.getTitleOfTask());
-                toDoModel.setPriorityOfTask(newToDoModel.getPriorityOfTask());
-                return taskRepository.save(toDoModel);
-            }).orElseThrow();
-}
+    @PutMapping("/api/task/{id}")
+    Task updateModel(@RequestBody Task newToDoModel, @PathVariable long id) {
+        return taskRepository.findById(id)
+                .map(toDoModel -> {
+                    toDoModel.setExecutionDay(newToDoModel.getExecutionDay());
+                    toDoModel.setDescription(newToDoModel.getDescription());
+                    toDoModel.setTitleOfTask(newToDoModel.getTitleOfTask());
+                    toDoModel.setPriorityOfTask(newToDoModel.getPriorityOfTask());
+                    return taskRepository.save(toDoModel);
+                }).orElseThrow();
+    }
+
     @GetMapping("/api/task/{id}")
     public TaskResponse getSingleTask(@PathVariable long id) {
         return taskRepository.findById(id).stream()
@@ -54,9 +64,8 @@ Task updateModel(@RequestBody Task newToDoModel, @PathVariable long id){
     }
 
     @GetMapping("/api/task")
-    public List<Task> getAllTasks() {
-        return taskRepository.findAll();
-//        return taskService.getAllTasks();
+    public List<TaskResponse> getAllTasks() {
+        return taskService.getAllTasks();
     }
 
     @GetMapping("/api/task/priority")

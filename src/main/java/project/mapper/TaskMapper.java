@@ -14,6 +14,7 @@ public class TaskMapper {
                 .titleOfTask(taskRequest.getTitleOfTask())
                 .priorityOfTask(taskRequest.getPriorityOfTask())
                 .executionDay(taskRequest.getExecutionDay())
+                .done(taskRequest.isDone())
                 .build();
     }
     public TaskResponse map(Task task){
@@ -21,8 +22,9 @@ public class TaskMapper {
                 .id(task.getId())
                 .description(task.getDescription())
                 .titleOfTask(task.getTitleOfTask())
-//                .priorityOfTask(task.getPriorityOfTask().name().toUpperCase())
+                .priorityOfTask(task.getPriorityOfTask().name().toUpperCase())
                 .executionDay(task.getExecutionDay())
+                .done(String.valueOf(task.isDone()))
                 .build();
     }
 

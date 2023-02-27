@@ -20,4 +20,5 @@ public class Task {
     @Enumerated(EnumType.STRING)
     private PriorityOfTask priorityOfTask;
     private LocalDate executionDay;
+    private boolean done;
 }

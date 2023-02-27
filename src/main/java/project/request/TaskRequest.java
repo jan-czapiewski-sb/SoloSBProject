@@ -1,7 +1,6 @@
 package project.request;
 
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 import project.model.PriorityOfTask;
 
@@ -14,4 +13,7 @@ public class TaskRequest {
     private String description;
     private PriorityOfTask priorityOfTask;
     private LocalDate executionDay;
+    private boolean done;
+
+
 }
