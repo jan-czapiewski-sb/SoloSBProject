@@ -15,12 +15,16 @@ import java.util.stream.Collectors;
 
 @Service
 @EnableScheduling
-@RequiredArgsConstructor
 public class EmailService {
     private final JavaMailSender javaMailSender;
     private final TaskService taskService;
 
-//    @Scheduled(cron = "0 45 15 * * MON-FRI")
+    public EmailService(JavaMailSender javaMailSender, TaskService taskService) {
+        this.javaMailSender = javaMailSender;
+        this.taskService = taskService;
+    }
+
+    //    @Scheduled(cron = "0 45 15 * * MON-FRI")
     @Scheduled(cron = "0 20 11 * * MON-FRI")
     public void sendSimpleMessage() {
         List<String> collect = taskService.getAllUndoneTasks().stream()

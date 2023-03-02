@@ -55,25 +55,6 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
 
-
-//    public TaskResponse updateTaskByFields(Long id, Map<Object, Object> fields) {
-//        Task task = taskRepository.findById(id).orElseThrow();
-//        fields.forEach((key, value) -> {
-//            Field field = ReflectionUtils.findField(Task.class, (String) key);
-//            field.setAccessible(true);
-//            if (field.getName().equals("priorityOfTask")) {
-//                ReflectionUtils.setField(field, task, PriorityOfTask.valueOf(String.valueOf(value)));
-//            } else {
-//                ReflectionUtils.setField(field, task, value);
-//            }
-//        });
-//        TaskResponse taskResponse = taskMapper.map(task);
-//        taskRepository.save(task);
-//        return taskResponse;
-
-//    }
-
-
     public void moveTaskToNextDay(long id) {
         Task task = taskRepository.findById(id).orElseThrow();
         LocalDate localDate = task.getExecutionDay().plusDays(1);
@@ -112,5 +93,13 @@ public class TaskService {
         Task task = taskRepository.findById(id).orElseThrow();
         task.setDone(!task.isDone());
         taskRepository.save(task);
+    }
+
+    public TaskResponse getSingleTask(long id) {
+        return taskRepository.findById(id)
+                .stream()
+                .map(taskMapper::map)
+                .findFirst()
+                .orElseThrow();
     }
 }

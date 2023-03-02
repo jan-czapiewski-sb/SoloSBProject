@@ -19,7 +19,6 @@ import java.util.List;
 public class TaskController {
     private final TaskService taskService;
     private final TaskRepository taskRepository;
-    private final TaskMapper taskMapper;
 
     @GetMapping("/api/task-done/{id}")
     public void markAsDone(@PathVariable long id) {
@@ -41,25 +40,16 @@ public class TaskController {
         taskRepository.delete(taskRepository.findById(id).orElseThrow());
     }
 
-    //    @PutMapping("/api/task/{id}")
-//    public TaskResponse editTask(@RequestBody TaskRequest taskRequest, @PathVariable long id) {
-//        return taskService.editFields(taskRequest, id);
-//    }
+
     @PutMapping("/api/task/{id}")
     public TaskResponse updateModel(@RequestBody TaskRequest taskRequest, @PathVariable long id) {
         return taskService.editFields(taskRequest, id);
-//        return taskRepository.findById(id).map(toDoModel -> {
-//            toDoModel.setExecutionDay(newToDoModel.getExecutionDay());
-//            toDoModel.setDescription(newToDoModel.getDescription());
-//            toDoModel.setTitleOfTask(newToDoModel.getTitleOfTask());
-//            toDoModel.setPriorityOfTask(newToDoModel.getPriorityOfTask());
-//            return taskRepository.save(toDoModel);
-//        }).orElseThrow();
     }
 
     @GetMapping("/api/task/{id}")
     public TaskResponse getSingleTask(@PathVariable long id) {
-        return taskRepository.findById(id).stream().map(taskMapper::map).findFirst().orElseThrow();
+        return taskService.getSingleTask(id);
+
     }
 
     @GetMapping("/api/task-undone")
@@ -87,11 +77,4 @@ public class TaskController {
     public List<TaskResponse> getSummaryOfTasksForToday() {
         return taskService.getSummaryOfTasksForToday();
     }
-
-
-//    @PatchMapping(path = "api/task/{id}")
-//    public TaskResponse editSingleField(@PathVariable Long id, @RequestBody Map<Object, Object> fields) {
-//        return taskService.updateTaskByFields(id, fields);
-//    }
-
 }
