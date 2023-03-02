@@ -6,7 +6,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import project.mapper.TaskMapper;
-import project.model.PriorityOfTask;
 import project.model.Task;
 import project.repository.TaskRepository;
 import project.request.TaskRequest;
@@ -83,7 +82,7 @@ public class TaskServiceTest {
         TaskResponse taskResponse = new TaskResponse();
         when(taskRepository.findAll()).thenReturn(tasks);
         //when
-        taskService.getAllTasks();
+        taskService.getAllUndoneTasks();
         //then
         verify(taskRepository).findAll();
     }
@@ -93,7 +92,7 @@ public class TaskServiceTest {
         List<Task> tasks = List.of(new Task());
         when(taskRepository.findAll()).thenReturn(tasks);
         //when
-        taskService.getAllTasksFilteredByPriority();
+        taskService.getAllTasksForTodayFilteredByPriority();
         //then
         verify(taskRepository).findAll();
     }
@@ -105,7 +104,7 @@ public class TaskServiceTest {
         task.setExecutionDay(LocalDate.now());
         when(taskRepository.findById(id)).thenReturn(Optional.of(task));
         //when
-        taskService.moveTaskToAnotherDay(id);
+        taskService.moveTaskToNextDay(id);
         //then
         verify(taskRepository).save(task);
     }

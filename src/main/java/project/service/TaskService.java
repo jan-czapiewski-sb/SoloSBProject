@@ -10,9 +10,7 @@ import project.request.TaskRequest;
 import project.response.TaskResponse;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,19 +31,29 @@ public class TaskService {
         return taskMapper.map(task);
     }
 
-    public List<TaskResponse> getAllTasks() {
-        return taskRepository.findAll().stream()
+    public List<TaskResponse> getAllDoneTasks() {
+        return taskRepository.findAll()
+                .stream()
+                .filter(task -> task.isDone() == true)
                 .map(taskMapper::map)
                 .collect(Collectors.toList());
     }
 
-    public List<TaskResponse> getAllTasksFilteredByPriority() {
+    public List<TaskResponse> getAllUndoneTasks() {
+        return taskRepository.findAll().stream()
+                .filter(task -> task.isDone() == false)
+                .sorted(Comparator.comparing(Task::getExecutionDay))
+                .map(taskMapper::map)
+                .collect(Collectors.toList());
+    }
+
+    public List<TaskResponse> getAllTasksForTodayFilteredByPriority() {
         return taskRepository.findAll().stream()
                 .sorted(Comparator.comparing(Task::getPriorityOfTask).reversed())
                 .map(taskMapper::map)
+                .filter(taskResponse -> taskResponse.getExecutionDay().equals(LocalDate.now()))
                 .collect(Collectors.toList());
     }
-
 
 
 //    public TaskResponse updateTaskByFields(Long id, Map<Object, Object> fields) {
@@ -62,10 +70,11 @@ public class TaskService {
 //        TaskResponse taskResponse = taskMapper.map(task);
 //        taskRepository.save(task);
 //        return taskResponse;
+
 //    }
 
 
-    public void moveTaskToAnotherDay(long id) {
+    public void moveTaskToNextDay(long id) {
         Task task = taskRepository.findById(id).orElseThrow();
         LocalDate localDate = task.getExecutionDay().plusDays(1);
         task.setExecutionDay(localDate);
@@ -75,16 +84,19 @@ public class TaskService {
     private void checkIfAnyOfFieldsIsntNull(TaskRequest taskRequest, Task task) {
         if (taskRequest.getPriorityOfTask() != null) {
             PriorityOfTask[] values = PriorityOfTask.values();
-            PriorityOfTask priority = Arrays.stream(values)
-                    .filter(priorityOfTask -> priorityOfTask.name().equals(taskRequest.getPriorityOfTask()))
-                    .findFirst()
-                    .orElseThrow();
-            task.setPriorityOfTask(task.getPriorityOfTask());
-        } else if (taskRequest.getTitleOfTask() != null) {
+            for (PriorityOfTask value : values) {
+                if (value.name().equals(taskRequest.getPriorityOfTask().name())) {
+                    task.setPriorityOfTask(value);
+                }
+            }
+        }
+        if (!taskRequest.getTitleOfTask().isEmpty()) {
             task.setTitleOfTask(taskRequest.getTitleOfTask());
-        } else if (taskRequest.getDescription() != null) {
+        }
+        if (!taskRequest.getDescription().isEmpty()) {
             task.setDescription(taskRequest.getDescription());
-        } else if (taskRequest.getExecutionDay() != null) {
+        }
+        if (taskRequest.getExecutionDay() != null) {
             task.setExecutionDay(taskRequest.getExecutionDay());
         }
     }
@@ -94,5 +106,11 @@ public class TaskService {
                 .filter(task -> task.getExecutionDay().equals(LocalDate.now()))
                 .map(taskMapper::map)
                 .collect(Collectors.toList());
+    }
+
+    public void markAsDone(long id) {
+        Task task = taskRepository.findById(id).orElseThrow();
+        task.setDone(!task.isDone());
+        taskRepository.save(task);
     }
 }

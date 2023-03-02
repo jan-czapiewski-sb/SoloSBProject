@@ -23,9 +23,11 @@ public class TaskController {
 
     @GetMapping("/api/task-done/{id}")
     public void markAsDone(@PathVariable long id) {
-        Task task = taskRepository.findById(id).orElseThrow();
-        task.setDone(true);
-        taskRepository.save(task);
+        taskService.markAsDone(id);
+    }
+    @GetMapping("/api/task")
+    public List<Task> getAllTasks(){
+        return taskRepository.findAll();
     }
 
     @PostMapping("/api/task")
@@ -44,39 +46,40 @@ public class TaskController {
 //        return taskService.editFields(taskRequest, id);
 //    }
     @PutMapping("/api/task/{id}")
-    Task updateModel(@RequestBody Task newToDoModel, @PathVariable long id) {
-        return taskRepository.findById(id)
-                .map(toDoModel -> {
-                    toDoModel.setExecutionDay(newToDoModel.getExecutionDay());
-                    toDoModel.setDescription(newToDoModel.getDescription());
-                    toDoModel.setTitleOfTask(newToDoModel.getTitleOfTask());
-                    toDoModel.setPriorityOfTask(newToDoModel.getPriorityOfTask());
-                    return taskRepository.save(toDoModel);
-                }).orElseThrow();
+    public TaskResponse updateModel(@RequestBody TaskRequest taskRequest, @PathVariable long id) {
+        return taskService.editFields(taskRequest, id);
+//        return taskRepository.findById(id).map(toDoModel -> {
+//            toDoModel.setExecutionDay(newToDoModel.getExecutionDay());
+//            toDoModel.setDescription(newToDoModel.getDescription());
+//            toDoModel.setTitleOfTask(newToDoModel.getTitleOfTask());
+//            toDoModel.setPriorityOfTask(newToDoModel.getPriorityOfTask());
+//            return taskRepository.save(toDoModel);
+//        }).orElseThrow();
     }
 
     @GetMapping("/api/task/{id}")
     public TaskResponse getSingleTask(@PathVariable long id) {
-        return taskRepository.findById(id).stream()
-                .map(taskMapper::map)
-                .findFirst()
-                .orElseThrow();
+        return taskRepository.findById(id).stream().map(taskMapper::map).findFirst().orElseThrow();
     }
 
-    @GetMapping("/api/task")
-    public List<TaskResponse> getAllTasks() {
-        return taskService.getAllTasks();
+    @GetMapping("/api/task-undone")
+    public List<TaskResponse> getAllUndoneTasks() {
+        return taskService.getAllUndoneTasks();
     }
 
-    @GetMapping("/api/task/priority")
-    public List<TaskResponse> getAllTasksFilteredByPriority() {
-
-        return taskService.getAllTasksFilteredByPriority();
+    @GetMapping("/api/task-done")
+    public List<TaskResponse> getAllDoneTasks() {
+        return taskService.getAllDoneTasks();
     }
 
-    @GetMapping("/api/task/move/{id}")
-    public ResponseEntity<String> moveTaskToAnotherDay(@PathVariable long id) {
-        taskService.moveTaskToAnotherDay(id);
+    @GetMapping("/api/task/alltodaytasks-bypriority")
+    public List<TaskResponse> getAllTasksForTodayFilteredByPriority() {
+        return taskService.getAllTasksForTodayFilteredByPriority();
+    }
+
+    @GetMapping("/api/task-move/{id}")
+    public ResponseEntity<String> moveTaskToNextDay(@PathVariable long id) {
+        taskService.moveTaskToNextDay(id);
         return new ResponseEntity<>("Moved to another day", HttpStatus.ACCEPTED);
     }
 
